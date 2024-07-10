@@ -16,8 +16,12 @@ Sign in hassle-free with your Google account, ensuring your personal information
 - **Update Notes:** Modify existing notes to keep your information current and relevant.
 - **Delete Notes:** Remove notes that are no longer needed, keeping your notes organized.
 
-### Smooth User Experience
-The app uses a single activity with multiple fragments for different screens, ensuring a seamless and responsive experience.
+### Enhanced User Experience
+- **Single Activity with Fragments:** The app uses a single activity with multiple fragments for different screens, ensuring a seamless and responsive experience.
+- **Firebase Authentication:** Integrated with Firebase for secure and reliable Google authentication.
+- **Lottie Animations:** Enrich your journey with Lottie animations, adding delightful visual elements that enhance the user experience.
+- **SQLite Integration:** Utilized SQLite for efficient local data storage and management.
+- **RecyclerView Implementation:** Used RecyclerView for displaying a list of notes in a modern and optimized way.
 
 #Screenshot
 
