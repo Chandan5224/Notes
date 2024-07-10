@@ -22,7 +22,8 @@ Sign in hassle-free with your Google account, ensuring your personal information
 - **Lottie Animations:** Enrich your journey with Lottie animations, adding delightful visual elements that enhance the user experience.
 - **SQLite Integration:** Utilized SQLite for efficient local data storage and management.
 - **RecyclerView Implementation:** Used RecyclerView for displaying a list of notes in a modern and optimized way.
-
+## Download
+[Download the APK](https://mega.nz/file/xEkGFTQR#Cn_6yfyaFjXNtzcMxAv7VGZGdh2-MwYzPD4YVJklTVY)
 #Screenshot
 
 ![Apps Screenshot](https://github.com/Chandan5224/Notes/assets/86766647/935ee859-6ff8-4c7b-aa33-0844fdf0fddf)
