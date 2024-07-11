@@ -1,51 +1,32 @@
 package com.example.notes.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.fragment.findNavController
-import com.example.notes.R
 import com.example.notes.databinding.FragmentNoteBinding
 import com.example.notes.model.NoteData
 import com.example.notes.utils.AppPreferences
 import com.example.notes.utils.Constants
-import com.example.notes.utils.Constants.USER_UID
 import com.example.notes.utils.Utils
-import com.google.android.material.internal.ViewUtils.showKeyboard
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class NoteFragment : Fragment() {
 
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
-    private lateinit var toolbarTitle: TextView
-    private lateinit var toolbarEditTitle: EditText
     private lateinit var viewModel: MainViewModel
     private var noteData: NoteData? = null
     private lateinit var userUid: String
+    private var deleteNote: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -59,138 +40,89 @@ class NoteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
         setupNoteData()
-        setupEditText()
-        setupMenu()
-        focusAndShowKeyboard()
+        setupClickListeners()
     }
 
-    private fun setupToolbar() {
-        (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(binding.toolbar)
-            supportActionBar?.apply {
-                setDisplayHomeAsUpEnabled(true)
-                setHomeAsUpIndicator(R.drawable.arrow_left)
-                setHomeButtonEnabled(true)
-                title = getString(R.string.default_title)
+    private fun setupClickListeners() {
+
+        binding.btnBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+        binding.btnShare.setOnClickListener {
+            val title = binding.etTitle.text.toString().trim()
+            val body = binding.etBody.text.toString().trim()
+            noteData?.apply {
+                this.title = title
+                this.body = body
+            }
+            val shareNote = "*$title*\n$body"
+            val intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, shareNote)
+                type = "text/plain"
+            }
+            startActivity(Intent.createChooser(intent, "Share To:"))
+
+        }
+
+        binding.btnDelete.setOnClickListener {
+            noteData?.let { data ->
+                if (data.id == 0) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Empty note can't deleted !",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    deleteNote = true
+                    findNavController().navigateUp()
+
+                }
             }
         }
     }
+
 
     private fun setupNoteData() {
         arguments?.getSerializable(Constants.FROM_HOME_TO_NOTE)?.let { data ->
             noteData = data as NoteData
             binding.etBody.setText(noteData?.body ?: "")
-            binding.toolbar.title = noteData?.title ?: getString(R.string.default_title)
+            binding.etTitle.setText(noteData?.title ?: "")
+            focusAndShowKeyboard(binding.etBody)
         } ?: run {
             noteData = NoteData(
                 0,
                 userUid,
-                getString(R.string.default_title),
+                "",
                 "",
                 Utils.getTimeStamp()
             )
+            focusAndShowKeyboard(binding.etTitle)
         }
     }
 
-    private fun setupEditText() {
-        toolbarTitle = TextView(requireContext()).apply {
-            visibility = View.GONE
-            text = binding.toolbar.title
-            textSize = 22f
-            ellipsize = TextUtils.TruncateAt.END
-            maxLines = 1
-            setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
-        }
-
-        toolbarEditTitle = EditText(requireContext()).apply {
-            visibility = View.GONE
-            textSize = 22f
-            setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
-            background = null
-            setSingleLine()
-        }
-
-        binding.toolbar.addView(toolbarTitle)
-        binding.toolbar.addView(toolbarEditTitle)
-
-        binding.toolbar.setOnClickListener {
-            binding.toolbar.title = ""
-            toolbarTitle.visibility = View.GONE
-            toolbarEditTitle.visibility = View.VISIBLE
-            toolbarEditTitle.setText(toolbarTitle.text)
-            toolbarEditTitle.requestFocus()
-            toolbarEditTitle.setSelection(toolbarEditTitle.text.length)
-            val imm =
-                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(toolbarEditTitle, InputMethodManager.SHOW_IMPLICIT)
-        }
-
-        toolbarEditTitle.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                toolbarTitle.text = toolbarEditTitle.text
-                toolbarTitle.visibility = View.VISIBLE
-                toolbarEditTitle.visibility = View.GONE
-            }
-        }
-
-        toolbarEditTitle.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                toolbarTitle.text = s.toString()
-            }
-        })
-    }
-
-    private fun setupMenu() {
-        val menuHost = requireActivity() as MenuHost
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.note_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    android.R.id.home -> {
-                        findNavController().navigateUp()
-                        true
-                    }
-
-                    R.id.action_attach -> {
-                        // Handle Attach click
-                        true
-                    }
-
-                    R.id.action_more -> {
-                        // Handle More click
-                        true
-                    }
-
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-    }
-
-    private fun focusAndShowKeyboard() {
-        binding.etBody.requestFocus()
+    private fun focusAndShowKeyboard(editText: EditText) {
+        editText.requestFocus()
         val imm =
             requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(binding.etBody, InputMethodManager.SHOW_IMPLICIT)
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         noteData?.let { data ->
-            if (toolbarTitle.text.toString() != data.title || binding.etBody.text.toString() != data.body) {
+            if (deleteNote) {
+                viewModel.deleteNoteById(data.id, data.userUid)
+                _binding = null
+                return
+            }
+            if (binding.etTitle.text.toString() != data.title || binding.etBody.text.toString() != data.body) {
                 data.apply {
-                    title = toolbarTitle.text.toString()
-                    body = binding.etBody.text.toString()
+                    title = binding.etTitle.text.toString().trim()
+                    body = binding.etBody.text.toString().trim()
                     timestamp = Utils.getTimeStamp()
                 }
-                Log.d("TAG", data.toString())
                 if (data.id == 0)
                     viewModel.insertNote(data)
                 else

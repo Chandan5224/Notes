@@ -62,7 +62,11 @@ class NoteAdapter(private val listener: OnNoteClick) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val note = differ.currentList[position]
-        holder.title.text = note.title
+        if (note.title.isBlank())
+            holder.title.text = "Note title"
+        else
+            holder.title.text = note.title
+
         holder.body.text = note.body
         holder.time.text = Utils.formatDateTimeToDisplay(note.timestamp)
         // Generate a random color and ensure it's not the same as the last one

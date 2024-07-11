@@ -20,7 +20,7 @@ class Utils {
 
         fun formatDateTimeToDisplay(timestamp: String): String {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("hh:mm a, dd MMMM yyyy", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
             val date = inputFormat.parse(timestamp)
             return outputFormat.format(date!!)
         }
