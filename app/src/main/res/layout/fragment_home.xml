@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,93 +7,88 @@
     android:background="@color/black"
     tools:context=".ui.HomeFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <TextView
+        android:id="@+id/tvFragmentTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/nunito_semibold"
+        android:text="Notes"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnSearch"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/ripple_effect_home_btn"
+        android:src="@drawable/search"
+        app:layout_constraintBottom_toBottomOf="@+id/btnProfile"
+        app:layout_constraintEnd_toStartOf="@+id/btnProfile"
+        app:layout_constraintTop_toTopOf="@+id/btnProfile" />
+
+    <ImageButton
+        android:id="@+id/btnProfile"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/ripple_effect_home_btn"
+        android:src="@drawable/person"
+        app:layout_constraintBottom_toBottomOf="@+id/tvFragmentTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvFragmentTitle" />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/serachshape"
+        android:visibility="gone"
+        app:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:queryBackground="@android:color/transparent"
+        app:queryHint="Search Notes"
+        app:searchIcon="@drawable/baseline_search" />
+
+    <include
+        android:id="@+id/layoutCreateFirstNote"
+        layout="@layout/layout_create_first_note" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvFragmentTitle"
+        tools:listitem="@layout/item_note" />
 
-        <TextView
-            android:id="@+id/tvFragmentTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/nunito_semibold"
-            android:text="Notes"
-            android:textColor="@color/white"
-            android:textSize="40sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/btnSearch"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/ripple_effect_home_btn"
-            android:src="@drawable/search"
-            app:layout_constraintBottom_toBottomOf="@+id/btnProfile"
-            app:layout_constraintEnd_toStartOf="@+id/btnProfile"
-            app:layout_constraintTop_toTopOf="@+id/btnProfile" />
-
-        <ImageButton
-            android:id="@+id/btnProfile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/ripple_effect_home_btn"
-            android:src="@drawable/person"
-            app:layout_constraintBottom_toBottomOf="@+id/tvFragmentTitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvFragmentTitle" />
-
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/serachshape"
-            android:visibility="gone"
-            app:iconifiedByDefault="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:queryBackground="@android:color/transparent"
-            app:queryHint="Search Notes"
-            app:searchIcon="@drawable/baseline_search" />
-
-        <include
-            android:id="@+id/layoutCreateFirstNote"
-            layout="@layout/layout_create_first_note" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:scrollbars="vertical"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvFragmentTitle"
-            tools:listitem="@layout/item_note" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/white"
         android:contentDescription="add notes"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_input_add" />
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

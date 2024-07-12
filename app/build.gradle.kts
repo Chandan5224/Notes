@@ -70,4 +70,8 @@ dependencies {
     // sqlite
     implementation (libs.androidx.sqlite.ktx)
 
+
+    // room
+    implementation (libs.androidx.room.ktx)
+
 }

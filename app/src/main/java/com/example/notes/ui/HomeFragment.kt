@@ -89,7 +89,7 @@ class HomeFragment : Fragment(), OnNoteClick {
         binding.recyclerView.visibility = View.VISIBLE
         viewModel.getNotesByUserUid(AppPreferences.getDataFromSharePreference(Constants.USER_UID)!!)
         val constraintSet = ConstraintSet()
-        constraintSet.clone(binding.constraintLayout)
+        constraintSet.clone(binding.root)
         // Clear the original top constraint of the RecyclerView
         constraintSet.clear(binding.recyclerView.id, ConstraintSet.TOP)
         // Connect the top of the RecyclerView to the bottom of the SearchView
@@ -103,7 +103,7 @@ class HomeFragment : Fragment(), OnNoteClick {
             marginInPixels
         )
         // Apply the new constraints to the ConstraintLayout
-        constraintSet.applyTo(binding.constraintLayout)
+        constraintSet.applyTo(binding.root)
     }
 
     private fun observeNotes() {
@@ -151,7 +151,7 @@ class HomeFragment : Fragment(), OnNoteClick {
         // Make the search view visible
         binding.searchView.visibility = View.VISIBLE
         val constraintSet = ConstraintSet()
-        constraintSet.clone(binding.constraintLayout)
+        constraintSet.clone(binding.root)
         // Clear the original top constraint of the RecyclerView
         constraintSet.clear(binding.recyclerView.id, ConstraintSet.TOP)
         // Connect the top of the RecyclerView to the bottom of the SearchView
@@ -165,7 +165,7 @@ class HomeFragment : Fragment(), OnNoteClick {
             marginInPixels
         )
         // Apply the new constraints to the ConstraintLayout
-        constraintSet.applyTo(binding.constraintLayout)
+        constraintSet.applyTo(binding.root)
 
         binding.tvFragmentTitle.visibility = View.GONE
         binding.btnSearch.visibility = View.GONE

@@ -74,11 +74,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btnBack" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvImages"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:scrollbars="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/btnBack"
+            tools:listitem="@layout/item_image" />
+
         <EditText
             android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:background="@null"
             android:fontFamily="@font/nunito_bold"
             android:hint="Note title"
@@ -89,7 +99,7 @@
             android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnBack" />
+            app:layout_constraintTop_toBottomOf="@+id/rvImages" />
 
         <EditText
             android:id="@+id/etBody"

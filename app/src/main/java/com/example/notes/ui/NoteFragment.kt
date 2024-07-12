@@ -13,6 +13,9 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.notes.adapter.NoteAdapter
 import com.example.notes.databinding.FragmentNoteBinding
 import com.example.notes.model.NoteData
 import com.example.notes.utils.AppPreferences
@@ -21,6 +24,7 @@ import com.example.notes.utils.Utils
 
 class NoteFragment : Fragment() {
 
+//    private lateinit var mAdapter: ImageAdapter
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
@@ -40,9 +44,19 @@ class NoteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        setupRecyclerView()
         setupNoteData()
         setupClickListeners()
     }
+
+//    private fun setupRecyclerView() {
+//        // Initialize RecyclerView
+//        val layoutManager =
+//            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+//        binding.rvImages.layoutManager = layoutManager
+//        mAdapter = NoteAdapter(this)
+//        binding.rvImages.adapter = adapter
+//    }
 
     private fun setupClickListeners() {
 
@@ -111,16 +125,18 @@ class NoteFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        val etTitle = binding.etTitle.text.toString().trim()
+        val etBody = binding.etBody.text.toString().trim()
         noteData?.let { data ->
             if (deleteNote) {
                 viewModel.deleteNoteById(data.id, data.userUid)
                 _binding = null
                 return
             }
-            if (binding.etTitle.text.toString() != data.title || binding.etBody.text.toString() != data.body) {
+            if (etTitle != data.title || etBody != data.body) {
                 data.apply {
-                    title = binding.etTitle.text.toString().trim()
-                    body = binding.etBody.text.toString().trim()
+                    title = etTitle
+                    body = etBody
                     timestamp = Utils.getTimeStamp()
                 }
                 if (data.id == 0)
