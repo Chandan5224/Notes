@@ -16,6 +16,7 @@ class MyDBHelper(context: Context) :
         private const val COLUMN_BODY = "body"
         private const val COLUMN_USER_UID = "userUid"
         private const val COLUMN_TIMESTAMP = "timestamp"
+        private const val COLUMN_IMAGE_PATHS = "imagePaths"
 
         private const val SQL_CREATE_ENTRIES =
             "CREATE TABLE $TABLE_NAME (" +
@@ -23,8 +24,9 @@ class MyDBHelper(context: Context) :
                     "$COLUMN_USER_UID TEXT," +
                     "$COLUMN_TITLE TEXT," +
                     "$COLUMN_BODY TEXT," +
-                    "$COLUMN_TIMESTAMP TEXT)"
-
+                    "$COLUMN_TIMESTAMP TEXT," +
+                    "$COLUMN_IMAGE_PATHS TEXT)"
+        
         private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS $TABLE_NAME"
     }
 

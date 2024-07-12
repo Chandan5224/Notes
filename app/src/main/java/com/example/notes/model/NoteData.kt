@@ -8,5 +8,6 @@ data class NoteData(
     val userUid: String,
     var title: String,
     var body: String,
-    var timestamp: String
+    var timestamp: String,
+    var imagePaths: List<String> = listOf()
 ) : Serializable

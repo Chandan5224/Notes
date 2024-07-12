@@ -2,35 +2,48 @@ package com.example.notes.ui
 
 import android.content.Context
 import android.content.Intent
+import android.icu.text.Transliterator.Position
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.notes.adapter.NoteAdapter
+import com.example.notes.adapter.ImageAdapter
+import com.example.notes.adapter.OnImageClick
 import com.example.notes.databinding.FragmentNoteBinding
 import com.example.notes.model.NoteData
 import com.example.notes.utils.AppPreferences
 import com.example.notes.utils.Constants
 import com.example.notes.utils.Utils
 
-class NoteFragment : Fragment() {
+class NoteFragment : Fragment(), OnImageClick {
 
-//    private lateinit var mAdapter: ImageAdapter
+    private lateinit var mAdapter: ImageAdapter
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
     private var noteData: NoteData? = null
     private lateinit var userUid: String
     private var deleteNote: Boolean = false
+    private var imageList: ArrayList<String> = arrayListOf()
+
+    private val imagePicker =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
+            // Handle the selected images (URIs)
+            if (uris.isNotEmpty()) {
+                binding.rvImages.visibility = View.VISIBLE
+                val paths = uris.map { it.toString() }
+                imageList.addAll(paths)
+                mAdapter.updateImageData(imageList)
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -44,22 +57,25 @@ class NoteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        setupRecyclerView()
+        setupRecyclerView()
         setupNoteData()
         setupClickListeners()
     }
 
-//    private fun setupRecyclerView() {
-//        // Initialize RecyclerView
-//        val layoutManager =
-//            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-//        binding.rvImages.layoutManager = layoutManager
-//        mAdapter = NoteAdapter(this)
-//        binding.rvImages.adapter = adapter
-//    }
+    private fun setupRecyclerView() {
+        // Initialize RecyclerView
+        val layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvImages.layoutManager = layoutManager
+        mAdapter = ImageAdapter(this)
+        binding.rvImages.adapter = mAdapter
+    }
 
     private fun setupClickListeners() {
 
+        binding.btnAttach.setOnClickListener {
+            imagePicker.launch("image/*")
+        }
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -103,6 +119,11 @@ class NoteFragment : Fragment() {
             noteData = data as NoteData
             binding.etBody.setText(noteData?.body ?: "")
             binding.etTitle.setText(noteData?.title ?: "")
+            imageList.addAll(noteData?.imagePaths ?: listOf())
+            mAdapter.updateImageData(imageList)
+            if (imageList.isNotEmpty()) {
+                binding.rvImages.visibility = View.VISIBLE
+            }
             focusAndShowKeyboard(binding.etBody)
         } ?: run {
             noteData = NoteData(
@@ -133,10 +154,11 @@ class NoteFragment : Fragment() {
                 _binding = null
                 return
             }
-            if (etTitle != data.title || etBody != data.body) {
+            if (etTitle != data.title || etBody != data.body || imageList != data.imagePaths) {
                 data.apply {
                     title = etTitle
                     body = etBody
+                    imagePaths = imageList
                     timestamp = Utils.getTimeStamp()
                 }
                 if (data.id == 0)
@@ -146,5 +168,13 @@ class NoteFragment : Fragment() {
             }
         }
         _binding = null
+    }
+
+    override fun onClick(position: Int) {
+        imageList.removeAt(position)
+        mAdapter.removeImageData(position)
+        if (imageList.isEmpty()) {
+            binding.rvImages.visibility = View.GONE
+        }
     }
 }

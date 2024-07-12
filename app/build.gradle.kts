@@ -71,7 +71,7 @@ dependencies {
     implementation (libs.androidx.sqlite.ktx)
 
 
-    // room
-    implementation (libs.androidx.room.ktx)
+    // Gson
+    implementation (libs.gson)
 
 }

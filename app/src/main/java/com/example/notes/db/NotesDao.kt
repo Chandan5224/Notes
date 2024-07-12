@@ -3,11 +3,12 @@ package com.example.notes.db
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import android.provider.ContactsContract.CommonDataKinds.Note
 import com.example.notes.model.NoteData
 import com.example.notes.utils.Constants.TABLE_NAME
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
-class NotesDao( context: Context) {
+class NotesDao(context: Context) {
 
     private val dbHelper: MyDBHelper = MyDBHelper(context)
 
@@ -18,6 +19,7 @@ class NotesDao( context: Context) {
             put("title", note.title)
             put("body", note.body)
             put("timestamp", note.timestamp)
+            put("imagePaths", Gson().toJson(note.imagePaths)) // Convert list to JSON string
         }
         return db.insert(TABLE_NAME, null, values)
     }
@@ -26,7 +28,7 @@ class NotesDao( context: Context) {
         val db = dbHelper.readableDatabase
         val cursor: Cursor = db.query(
             TABLE_NAME,
-            arrayOf("id", "userUid", "title", "body","timestamp"),
+            arrayOf("id", "userUid", "title", "body", "timestamp", "imagePaths"),
             "userUid=?",
             arrayOf(userUid),
             null,
@@ -41,7 +43,8 @@ class NotesDao( context: Context) {
                 cursor.getString(cursor.getColumnIndexOrThrow("userUid")),
                 cursor.getString(cursor.getColumnIndexOrThrow("title")),
                 cursor.getString(cursor.getColumnIndexOrThrow("body")),
-                cursor.getString(cursor.getColumnIndexOrThrow("timestamp"))
+                cursor.getString(cursor.getColumnIndexOrThrow("timestamp")),
+                Gson().fromJson(cursor.getString(cursor.getColumnIndexOrThrow("imagePaths")), object : TypeToken<List<String>>() {}.type)
             )
             notes.add(note)
         }
@@ -55,6 +58,7 @@ class NotesDao( context: Context) {
             put("title", note.title)
             put("body", note.body)
             put("timestamp", note.timestamp)
+            put("imagePaths", Gson().toJson(note.imagePaths)) // Convert list to JSON string
         }
         return db.update(TABLE_NAME, values, "id=?", arrayOf(note.id.toString()))
     }
