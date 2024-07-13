@@ -1,5 +1,6 @@
 package com.example.notes.ui
 
+import android.text.BoringLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +12,10 @@ import com.google.firebase.auth.FirebaseAuth
 class MainViewModel(private val repository: MainRepository) : ViewModel() {
     private val _notes = MutableLiveData<List<NoteData>>()
     val notes: LiveData<List<NoteData>> = _notes
+    val longPress: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
+        longPress.value = false
         val user = FirebaseAuth.getInstance().currentUser
         user?.let {
             getNotesByUserUid(it.uid)
@@ -38,6 +41,12 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
         repository.deleteNoteById(id)
         _notes.value = repository.getNotesByUserUid(userUid)
     }
+
+    fun deleteNotesByIds(ids: List<Int>, userUid: String) {
+        repository.deleteNotesByIds(ids)
+        _notes.value = repository.getNotesByUserUid(userUid)
+    }
+
 
     fun clearAllData() {
         AppPreferences.removeDataSharePreference(Constants.LOGIN)

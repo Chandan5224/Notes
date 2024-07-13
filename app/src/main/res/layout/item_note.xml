@@ -14,6 +14,18 @@
         android:layout_height="match_parent"
         android:background="?selectableItemBackgroundBorderless">
 
+        <ImageView
+            android:id="@+id/btnSelection"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:elevation="10dp"
+            android:src="@drawable/icon_default_selected"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/etTitle"
             android:layout_width="match_parent"

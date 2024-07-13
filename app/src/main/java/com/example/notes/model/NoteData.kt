@@ -9,5 +9,6 @@ data class NoteData(
     var title: String,
     var body: String,
     var timestamp: String,
-    var imagePaths: List<String> = listOf()
+    var imagePaths: List<String> = listOf(),
+    var isSelected: Boolean = false
 ) : Serializable

@@ -39,8 +39,9 @@ class ImageAdapter(private val listener: OnImageClick) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
+        setAnimation(holder.itemView)
         val imagePath = imageList[position]
-        Glide.with(holder.itemView.context).load(Uri.parse(imagePath))
+        Glide.with(holder.itemView.context).load(imagePath)
             .error(R.drawable.error)
             .into(holder.image)
         holder.btnDelete.setOnClickListener {
@@ -58,11 +59,20 @@ class ImageAdapter(private val listener: OnImageClick) :
     }
 
     fun removeImageData(position: Int) {
-        imageList.removeAt(position)
-        notifyItemRemoved(position)
-        notifyItemChanged(position)
+        if (position >= 0 && position < imageList.size) {
+            imageList.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, imageList.size)
+        }
     }
-
+    private fun setAnimation(view: View) {
+        val animation = AnimationUtils.loadAnimation(
+            view.context,
+            android.R.anim.fade_in
+        )
+        animation.repeatCount = 0  // Ensure the animation doesn't repeat indefinitely
+        view.startAnimation(animation)
+    }
 }
 
 interface OnImageClick {

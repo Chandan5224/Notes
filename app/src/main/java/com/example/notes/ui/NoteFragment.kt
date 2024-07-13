@@ -5,6 +5,8 @@ import android.content.Intent
 import android.icu.text.Transliterator.Position
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,11 +41,34 @@ class NoteFragment : Fragment(), OnImageClick {
             // Handle the selected images (URIs)
             if (uris.isNotEmpty()) {
                 binding.rvImages.visibility = View.VISIBLE
-                val paths = uris.map { it.toString() }
+                val paths = uris.mapNotNull { uri ->
+                    getPathFromUri(uri)
+                }
                 imageList.addAll(paths)
+                Log.d("troubleshoot", imageList.toString())
                 mAdapter.updateImageData(imageList)
             }
+
         }
+
+    private fun getPathFromUri(uri: Uri): String? {
+        var filePath: String? = null
+        val cursor = requireActivity().contentResolver.query(
+            uri,
+            arrayOf(MediaStore.Images.Media.DATA),
+            null,
+            null,
+            null
+        )
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                filePath = it.getString(columnIndex)
+            }
+        }
+        return filePath
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

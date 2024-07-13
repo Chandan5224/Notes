@@ -14,4 +14,6 @@ class MainRepository(context: Context) {
     fun updateNote(note: NoteData) = noteDao.updateNote(note)
 
     fun deleteNoteById(id: Int) = noteDao.deleteNoteById(id)
+
+    fun deleteNotesByIds(ids: List<Int>) = noteDao.deleteNotesByIds(ids)
 }

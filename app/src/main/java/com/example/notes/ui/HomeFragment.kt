@@ -2,7 +2,9 @@ package com.example.notes.ui
 
 import android.animation.ObjectAnimator
 import android.graphics.Color
+import android.icu.text.Transliterator.Position
 import android.os.Bundle
+import android.util.Log
 import android.view.DragEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -41,12 +43,12 @@ class HomeFragment : Fragment(), OnNoteClick {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         viewModel = (activity as MainActivity).viewModel
+        setupRecyclerView()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
         setupBackPressHandler()
         setupClickListeners()
         setupSearchView()
@@ -71,6 +73,8 @@ class HomeFragment : Fragment(), OnNoteClick {
             override fun handleOnBackPressed() {
                 if (binding.searchView.visibility == View.VISIBLE) {
                     hideSearchView()
+                } else if (viewModel.longPress.value!!) {
+                    offLongPress()
                 } else {
                     isEnabled = false
                     requireActivity().onBackPressed()
@@ -125,9 +129,11 @@ class HomeFragment : Fragment(), OnNoteClick {
                         clear()
                         addAll(notes)
                     }
+                    Log.d("troubleshoot", "first time $notes")
                     binding.layoutCreateFirstNote.root.visibility = View.GONE
                     binding.recyclerView.visibility = View.VISIBLE
                     adapter.differ.submitList(notes)
+                    adapter.notifyItemChanged(0,notes.size)
                 }
             }
         }
@@ -143,7 +149,16 @@ class HomeFragment : Fragment(), OnNoteClick {
         }
 
         binding.btnSearch.setOnClickListener {
-            showSearchView()
+            if (viewModel.longPress.value!!) {
+                val deleteNotes = adapter.getListOfSelectedNoteIds()
+                offLongPress()
+                viewModel.deleteNotesByIds(
+                    deleteNotes,
+                    AppPreferences.getDataFromSharePreference(Constants.USER_UID)!!
+                )
+            } else {
+                showSearchView()
+            }
         }
     }
 
@@ -217,6 +232,18 @@ class HomeFragment : Fragment(), OnNoteClick {
             getString(R.string.file_not_found_try_searching_again)
     }
 
+    private fun offLongPress() {
+        adapter.setNotSelected()
+        viewModel.longPress.value = false
+        binding.btnAddNote.visibility = View.VISIBLE
+        binding.btnSearch.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.search
+            )
+        )
+    }
+
 
     override fun onClick(noteData: NoteData) {
         val bundle = Bundle().apply {
@@ -225,9 +252,17 @@ class HomeFragment : Fragment(), OnNoteClick {
         findNavController().navigate(R.id.action_homeFragment_to_noteFragment, bundle)
     }
 
-    override fun onLongClick(noteData: NoteData) {
-        val bottomSheetFragment = BottomSheetFragment.newInstance(noteData)
-        bottomSheetFragment.show(childFragmentManager, BottomSheetFragment().tag)
+    override fun onLongClick(noteData: NoteData, position: Int) {
+        viewModel.longPress.value = true
+        adapter.setSelected(position)
+        Log.d("TAG", "position $position $noteData")
+        binding.btnAddNote.visibility = View.GONE
+        binding.btnSearch.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.baseline_delete
+            )
+        )
     }
 
 }

@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +24,7 @@ class NoteAdapter(private val listener: OnNoteClick) :
     RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
     private var lastColor: Int? = null
+    private var longPress: Boolean = false
 
     // Define a list of colors
     private val colors = listOf(
@@ -53,6 +57,7 @@ class NoteAdapter(private val listener: OnNoteClick) :
         val body: TextView = view.findViewById(R.id.etBody)
         val container: CardView = view.findViewById(R.id.cardviewNoteItem)
         val time: TextView = view.findViewById(R.id.tvTime)
+        val btnSelection: ImageView = view.findViewById(R.id.btnSelection)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -76,11 +81,50 @@ class NoteAdapter(private val listener: OnNoteClick) :
         holder.container.setCardBackgroundColor(randomColor)
         lastColor = randomColor
 
+        if (longPress) {
+            holder.btnSelection.visibility = View.VISIBLE
+        } else {
+            holder.btnSelection.visibility = View.GONE
+        }
+        if (note.isSelected) {
+            holder.btnSelection.setImageDrawable(
+                ContextCompat.getDrawable(
+                    holder.itemView.context,
+                    R.drawable.icon_selected
+                )
+            )
+        } else {
+            holder.btnSelection.setImageDrawable(
+                ContextCompat.getDrawable(
+                    holder.itemView.context,
+                    R.drawable.icon_default_selected
+                )
+            )
+        }
         holder.itemView.setOnClickListener {
-            listener.onClick(note)
+            if (!longPress) {
+                listener.onClick(note)
+            } else {
+                differ.currentList[position].isSelected = !differ.currentList[position].isSelected
+                if (differ.currentList[position].isSelected) {
+                    holder.btnSelection.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            holder.itemView.context,
+                            R.drawable.icon_selected
+                        )
+                    )
+                } else {
+                    holder.btnSelection.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            holder.itemView.context,
+                            R.drawable.icon_default_selected
+                        )
+                    )
+                }
+            }
         }
         holder.itemView.setOnLongClickListener {
-            listener.onLongClick(note)
+            listener.onLongClick(note, holder.adapterPosition)
             true
         }
 
@@ -106,10 +150,37 @@ class NoteAdapter(private val listener: OnNoteClick) :
         )
         animation.repeatCount = 0  // Ensure the animation doesn't repeat indefinitely
         view.startAnimation(animation)
+
+    }
+
+    fun setSelected(position: Int) {
+        longPress = true
+        differ.currentList[position].isSelected = true
+        notifyDataSetChanged()
+    }
+
+    fun setNotSelected() {
+        longPress = false
+        differ.currentList.forEach { it.isSelected = false }
+        notifyDataSetChanged()
+    }
+
+    fun setLongPress(set: Boolean) {
+        longPress = set
+    }
+
+    fun getListOfSelectedNoteIds(): ArrayList<Int> {
+        val notes: ArrayList<Int> = arrayListOf()
+        for (note in differ.currentList) {
+            if (note.isSelected) {
+                notes.add(note.id)
+            }
+        }
+        return notes;
     }
 }
 
 interface OnNoteClick {
     fun onClick(noteData: NoteData)
-    fun onLongClick(noteData: NoteData)
+    fun onLongClick(noteData: NoteData, position: Int)
 }

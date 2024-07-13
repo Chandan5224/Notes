@@ -67,4 +67,9 @@ class NotesDao(context: Context) {
         val db = dbHelper.writableDatabase
         return db.delete(TABLE_NAME, "id=?", arrayOf(id.toString()))
     }
+    fun deleteNotesByIds(ids: List<Int>): Int {
+        val db = dbHelper.writableDatabase
+        val idList = ids.joinToString(",") { it.toString() }
+        return db.delete(TABLE_NAME, "id IN ($idList)", null)
+    }
 }
