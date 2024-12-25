@@ -57,21 +57,23 @@ dependencies {
 
     // Google Play services Auth
     implementation(libs.firebase.auth)
-    implementation (libs.play.services.auth)
+    implementation(libs.play.services.auth)
 
     // Coroutine Lifecycle Scopes
-    implementation (libs.androidx.lifecycle.viewmodel.ktx)
-    implementation (libs.androidx.lifecycle.runtime.ktx)
-    implementation (libs.androidx.lifecycle.extensions)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.extensions)
 
     // Glide
-    implementation (libs.glide)
+    implementation(libs.glide)
 
     // sqlite
-    implementation (libs.androidx.sqlite.ktx)
+    implementation(libs.androidx.sqlite.ktx)
 
 
     // Gson
-    implementation (libs.gson)
+    implementation(libs.gson)
 
+    // splash
+    implementation("androidx.core:core-splashscreen:1.2.0-alpha01")
 }

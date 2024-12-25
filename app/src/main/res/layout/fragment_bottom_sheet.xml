@@ -8,7 +8,7 @@
     android:orientation="horizontal"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    tools:context=".ui.BottomSheetFragment">
+    tools:context=".ui.fragment.BottomSheetFragment">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_delete"

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.LogInFragment">
+    tools:context=".ui.fragment.LogInFragment">
 
 
     <TextView
@@ -47,9 +47,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tagLine"
-        app:lottie_autoPlay="true"
-        app:lottie_rawRes="@raw/sign_in_green" />
+        app:layout_constraintTop_toBottomOf="@+id/tagLine" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/btnLogin"

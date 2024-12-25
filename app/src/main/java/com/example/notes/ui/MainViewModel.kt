@@ -15,7 +15,7 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
     val longPress: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
-        longPress.value = false
+        longPress.postValue(false)
         val user = FirebaseAuth.getInstance().currentUser
         user?.let {
             getNotesByUserUid(it.uid)
@@ -24,27 +24,27 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
 
     fun insertNote(note: NoteData) {
         repository.insertNote(note)
-        _notes.value = repository.getNotesByUserUid(note.userUid)
+        _notes.postValue(repository.getNotesByUserUid(note.userUid))
     }
 
     fun getNotesByUserUid(userUid: String) {
-        _notes.value = emptyList()
-        _notes.value = repository.getNotesByUserUid(userUid)
+        _notes.postValue(emptyList())
+        _notes.postValue(repository.getNotesByUserUid(userUid))
     }
 
     fun updateNote(note: NoteData) {
         repository.updateNote(note)
-        _notes.value = repository.getNotesByUserUid(note.userUid)
+        _notes.postValue(repository.getNotesByUserUid(note.userUid))
     }
 
     fun deleteNoteById(id: Int, userUid: String) {
         repository.deleteNoteById(id)
-        _notes.value = repository.getNotesByUserUid(userUid)
+        _notes.postValue(repository.getNotesByUserUid(userUid))
     }
 
     fun deleteNotesByIds(ids: List<Int>, userUid: String) {
         repository.deleteNotesByIds(ids)
-        _notes.value = repository.getNotesByUserUid(userUid)
+        _notes.postValue(repository.getNotesByUserUid(userUid))
     }
 
 

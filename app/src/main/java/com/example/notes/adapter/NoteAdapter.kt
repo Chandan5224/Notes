@@ -165,10 +165,6 @@ class NoteAdapter(private val listener: OnNoteClick) :
         notifyDataSetChanged()
     }
 
-    fun setLongPress(set: Boolean) {
-        longPress = set
-    }
-
     fun getListOfSelectedNoteIds(): ArrayList<Int> {
         val notes: ArrayList<Int> = arrayListOf()
         for (note in differ.currentList) {

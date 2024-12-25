@@ -1,21 +1,14 @@
-package com.example.notes.ui
+package com.example.notes.ui.fragment
 
-import android.animation.ObjectAnimator
-import android.graphics.Color
-import android.icu.text.Transliterator.Position
 import android.os.Bundle
 import android.util.Log
-import android.view.DragEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.Constraints
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
@@ -25,10 +18,10 @@ import com.example.notes.adapter.NoteAdapter
 import com.example.notes.adapter.OnNoteClick
 import com.example.notes.databinding.FragmentHomeBinding
 import com.example.notes.model.NoteData
+import com.example.notes.ui.MainActivity
+import com.example.notes.ui.MainViewModel
 import com.example.notes.utils.AppPreferences
 import com.example.notes.utils.Constants
-import com.example.notes.utils.Utils
-import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
 
 

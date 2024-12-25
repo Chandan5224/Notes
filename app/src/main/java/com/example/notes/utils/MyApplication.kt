@@ -9,18 +9,20 @@ import com.example.notes.ui.MainRepository
 import com.example.notes.ui.MainViewModel
 import com.example.notes.ui.ViewModelProviderFactory
 
-class MyApplication:Application() {
+class MyApplication : Application() {
     lateinit var appViewModel: MainViewModel
     private val appViewModelStore: ViewModelStore by lazy { ViewModelStore() }
 
     override fun onCreate() {
         super.onCreate()
+        // Delay heavy initialization
         AppPreferences.initialize(this)
         val repository = MainRepository(this)
         appViewModel = ViewModelProvider(
             appViewModelStore,
             ViewModelProviderFactory(repository)
         )[MainViewModel::class.java]
+
     }
 
 
